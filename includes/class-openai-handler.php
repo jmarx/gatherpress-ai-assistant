@@ -81,8 +81,10 @@ class OpenAI_Handler {
 		$abilities = array(
 			'gatherpress/list-venues',
 			'gatherpress/list-events',
+			'gatherpress/list-topics',
 			'gatherpress/calculate-dates',
 			'gatherpress/create-venue',
+			'gatherpress/create-topic',
 			'gatherpress/create-event',
 			'gatherpress/update-venue',
 			'gatherpress/update-event',
@@ -129,6 +131,11 @@ class OpenAI_Handler {
 					),
 				),
 			),
+			'gatherpress/list-topics'  => array(
+				'type'                 => 'object',
+				'properties'           => new \stdClass(),
+				'additionalProperties' => false,
+			),
 			'gatherpress/calculate-dates' => array(
 				'type'       => 'object',
 				'properties' => array(
@@ -169,6 +176,24 @@ class OpenAI_Handler {
 				),
 				'required'   => array( 'name', 'address' ),
 			),
+			'gatherpress/create-topic' => array(
+				'type'       => 'object',
+				'properties' => array(
+					'name'        => array(
+						'type'        => 'string',
+						'description' => 'Name of the topic',
+					),
+					'description' => array(
+						'type'        => 'string',
+						'description' => 'Description of the topic',
+					),
+					'parent_id'   => array(
+						'type'        => 'integer',
+						'description' => 'Parent topic ID for hierarchical topics',
+					),
+				),
+				'required'   => array( 'name' ),
+			),
 			'gatherpress/create-event' => array(
 				'type'       => 'object',
 				'properties' => array(
@@ -196,6 +221,11 @@ class OpenAI_Handler {
 						'type'        => 'string',
 						'description' => 'Post status (draft or publish)',
 						'enum'        => array( 'draft', 'publish' ),
+					),
+					'topic_ids'      => array(
+						'type'        => 'array',
+						'items'       => array( 'type' => 'integer' ),
+						'description' => 'Array of topic IDs to assign to this event',
 					),
 				),
 				'required'   => array( 'title', 'datetime_start' ),
@@ -256,6 +286,11 @@ class OpenAI_Handler {
 					'post_status'    => array(
 						'type'        => 'string',
 						'description' => 'New status',
+					),
+					'topic_ids'      => array(
+						'type'        => 'array',
+						'items'       => array( 'type' => 'integer' ),
+						'description' => 'Array of topic IDs to assign to this event',
 					),
 				),
 				'required'   => array( 'event_id' ),
